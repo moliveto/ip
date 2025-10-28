@@ -1,99 +1,16 @@
 <!doctype html>
-<html lang="es">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Mi IP pública</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-            margin: 2rem;
-            line-height: 1.5;
+<meta charset="utf-8">
+<title>IP</title>
+<script>
+    (async () => {
+        try {
+            const r = await fetch('ip.json?t=' + Date.now(), { cache: 'no-store' });
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            const j = await r.json();
+            const ip = j.ipv4 || j.ipv6 || 'Sin datos';
+            document.body.textContent = ip;
+        } catch (e) {
+            document.body.textContent = 'Sin datos';
         }
-
-        .card {
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin: 0 0 1rem;
-        }
-
-        .muted {
-            color: #666;
-            font-size: .9rem;
-        }
-
-        code {
-            background: #f6f8fa;
-            padding: .1rem .3rem;
-            border-radius: 6px;
-        }
-
-        button {
-            padding: .5rem .8rem;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>IP pública</h1>
-
-    <div class="card">
-        <h2>IP publicada (desde <code>ip.json</code>)</h2>
-        <div id="published">Cargando…</div>
-        <div class="muted" id="published-meta"></div>
-        <button id="refresh">Refrescar</button>
-    </div>
-
-    <div class="card">
-        <h2>Mi IP ahora (cliente)</h2>
-        <div id="client">Cargando…</div>
-        <div class="muted">Esto lo obtiene el navegador mediante un servicio público (ipify).</div>
-    </div>
-
-    <script>
-        async function loadPublished() {
-            const url = `ip.json?t=${Date.now()}`; // evita cache
-            try {
-                const r = await fetch(url, { cache: "no-store" });
-                if (!r.ok) throw new Error(`HTTP ${r.status}`);
-                const j = await r.json();
-                const lines = [];
-                if (j.ipv4) lines.push(`IPv4: <b>${j.ipv4}</b>`);
-                if (j.ipv6) lines.push(`IPv6: <b>${j.ipv6}</b>`);
-                if (lines.length === 0) lines.push("Sin datos");
-                document.getElementById("published").innerHTML = lines.join("<br/>");
-                document.getElementById("published-meta").textContent =
-                    j.timestampUtc ? `Actualizado: ${j.timestampUtc} UTC` : "";
-            } catch (e) {
-                document.getElementById("published").textContent = "No disponible";
-                document.getElementById("published-meta").textContent = e.message;
-            }
-        }
-
-        async function loadClientIp() {
-            try {
-                // IPv4
-                const v4 = await fetch("https://api.ipify.org?format=json").then(r => r.json()).catch(() => ({ ip: null }));
-                // IPv6 (si tu conexión tiene IPv6)
-                const v6 = await fetch("https://api64.ipify.org?format=json").then(r => r.json()).catch(() => ({ ip: null }));
-                const out = [];
-                if (v4.ip) out.push(`IPv4: <b>${v4.ip}</b>`);
-                if (v6.ip && v6.ip !== v4.ip) out.push(`IPv6: <b>${v6.ip}</b>`);
-                document.getElementById("client").innerHTML = out.length ? out.join("<br/>") : "No disponible";
-            } catch {
-                document.getElementById("client").textContent = "No disponible";
-            }
-        }
-
-        document.getElementById("refresh").addEventListener("click", loadPublished);
-        loadPublished();
-        loadClientIp();
-    </script>
-</body>
-
-</html>
+    })();
+</script>
