@@ -1,6 +1,9 @@
 // publish-ip.js
+// Node 20+ — Publica ip.json, index.html (solo IP en <h1>) e ip.txt (IP cruda)
 const GH_API = "https://api.github.com";
-const FILE_PATH = "ip.json";
+const FILE_JSON = "ip.json";
+const FILE_HTML = "index.html";
+const FILE_TXT = "ip.txt";
 
 async function getJson(url) {
   const ctrl = new AbortController();
@@ -68,24 +71,32 @@ async function putFile(owner, repo, path, branch, token, content, sha) {
 
 (async function main() {
   try {
-    const owner  = envOrThrow("GITHUB_OWNER");
-    const repo   = envOrThrow("GITHUB_REPO");
+    const owner = envOrThrow("GITHUB_OWNER");
+    const repo = envOrThrow("GITHUB_REPO");
     const branch = envOrThrow("GITHUB_BRANCH");
-    const token  = envOrThrow("GITHUB_TOKEN");
+    const token = envOrThrow("GITHUB_TOKEN");
 
     const { ipv4, ipv6 } = await detectIps();
     if (!ipv4 && !ipv6) throw new Error("No se pudo detectar ninguna IP pública");
 
-    const payload = {
-      ipv4,
-      ipv6,
-      timestampUtc: new Date().toISOString()
-    };
+    const chosenIp = ipv4 || ipv6 || "Sin datos";
 
-    const sha = await getExistingSha(owner, repo, FILE_PATH, branch, token);
-    await putFile(owner, repo, FILE_PATH, branch, token, JSON.stringify(payload, null, 2), sha);
+    // 1) ip.json (para consumo programático)
+    const payload = { ipv4, ipv6, timestampUtc: new Date().toISOString() };
+    const shaJson = await getExistingSha(owner, repo, FILE_JSON, branch, token);
+    await putFile(owner, repo, FILE_JSON, branch, token, JSON.stringify(payload, null, 2), shaJson);
 
-    console.log("OK:", payload);
+    // 2) index.html simple (como tu ftp.ps1): <html><body><h1>IP</h1></body></html>
+    const html = `<html><meta http-equiv="refresh" content="60"><body><h1>${chosenIp}</h1></body></html>\n`;
+    const shaHtml = await getExistingSha(owner, repo, FILE_HTML, branch, token);
+    await putFile(owner, repo, FILE_HTML, branch, token, html, shaHtml);
+
+    // 3) ip.txt en texto plano (una línea)
+    const txt = `${chosenIp}\n`;
+    const shaTxt = await getExistingSha(owner, repo, FILE_TXT, branch, token);
+    await putFile(owner, repo, FILE_TXT, branch, token, txt, shaTxt);
+
+    console.log("OK:", { ...payload, html: FILE_HTML, txt: FILE_TXT });
   } catch (err) {
     console.error("ERROR:", err.message);
     process.exitCode = 1;
