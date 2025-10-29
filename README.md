@@ -38,3 +38,10 @@ node .\publish-ip.js
 
    # Ejecuta el publicador desde la misma carpeta del script
    node "$PSScriptRoot\publish-ip.js"
+   ```
+
+## Desbloquear archivo ps1 para ejecucion
+
+Unblock-File .\eduardo.ps1
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+.\eduardo.ps1
