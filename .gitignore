@@ -1,4 +1,6 @@
-# Logs
+# Ignorar archivo de entorno local que puede contener secretos
+environment.ps1
+.env# Logs
 logs
 *.log
 npm-debug.log*

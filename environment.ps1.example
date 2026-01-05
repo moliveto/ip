@@ -1,0 +1,14 @@
+# Plantilla: environment.ps1.example
+$env:GITHUB_OWNER = "moliveto"
+$env:GITHUB_REPO  = "ip"
+$env:GITHUB_BRANCH = "main"
+
+# NO pongas tu token aquí. Opciones para establecer GITHUB_TOKEN:
+# 1) PowerShell SecretManagement:
+#    Install-Module Microsoft.PowerShell.SecretManagement, Microsoft.PowerShell.SecretStore
+#    Register-SecretVault -Name MyVault -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+#    Set-Secret -Name "GITHUB_TOKEN" -Secret (Read-Host "PAT" -AsSecureString)
+# 2) Variable de entorno (temporal):
+#    $env:GITHUB_TOKEN = "ghp_xxx"
+
+# Guarda este fichero como referencia local; no lo subas con el token al repo.
