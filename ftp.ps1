@@ -14,8 +14,9 @@ if (-not $BasePath) {
 if (-not $Branch) { $Branch = if ($env:GITHUB_BRANCH) { $env:GITHUB_BRANCH } else { 'gh-pages' } }
 
 $basePath = $BasePath
+# Guardar y servir siempre el fichero local 'index.html' para que el estado local esté actualizado
 $pidFile = Join-Path $basePath "ftp.pid"
-$htmlFile = Join-Path $basePath "ip.html"
+$htmlFile = Join-Path $basePath "index.html"
 
 # Leer credenciales desde variables de entorno si están definidas
 $ftpHost = if ($env:FTP_HOST) { $env:FTP_HOST } else { "example.com.ar" }
