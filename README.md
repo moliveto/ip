@@ -5,6 +5,7 @@ Este repositorio contiene scripts para publicar la IP pública de tu máquina en
 ⚠️ Seguridad: nunca pongas tu `GITHUB_TOKEN` ni credenciales en archivos versionados. Usa `environment.ps1` local, variables de entorno o un gestor de secretos.
 
 ## Contenido principal
+
 - `ftp.ps1` — genera `index.html` con la IP y puede publicar mediante la GitHub Contents API o por FTP (lee credenciales desde variables de entorno).
 - `environment.ps1` — plantilla para definir `GITHUB_OWNER`, `GITHUB_REPO`, `GITHUB_BRANCH` y (opcionalmente) `GITHUB_TOKEN` en tu entorno local. No lo subas al repo.
 - `README_GITHUB_TOKEN.md` — resumen sobre cómo gestionar tu `GITHUB_TOKEN` de forma segura.
@@ -12,6 +13,7 @@ Este repositorio contiene scripts para publicar la IP pública de tu máquina en
 ## Configurar variables de entorno
 
 Linux / macOS (bash/zsh):
+
 ```bash
 export GITHUB_OWNER="tu-usuario"
 export GITHUB_REPO="mi-ip"
@@ -20,6 +22,7 @@ export GITHUB_TOKEN="ghp_xxx..."
 ```
 
 Windows (PowerShell, temporal en la sesión):
+
 ```powershell
 $env:GITHUB_OWNER = "tu-usuario"
 $env:GITHUB_REPO  = "mi-ip"
@@ -49,12 +52,14 @@ Alternativas: Windows Credential Manager, 1Password, Bitwarden.
 Ejemplos:
 
 # Publicar en GitHub (recomendado)
+
 ```powershell
 . .\environment.ps1   # carga las variables en la sesión (si usas este archivo)
 .\ftp.ps1 -UseGitHub
 ```
 
 # Forzar publicación por FTP (si prefieres FTP y tienes credenciales)
+
 ```powershell
 $env:FTP_HOST="miftp.com"
 $env:FTP_USER="usuario"
@@ -64,6 +69,7 @@ $env:FTP_REMOTE_PATH="/ruta/index.html"
 ```
 
 Parámetros útiles de `ftp.ps1`:
+
 - `-UseGitHub` — forzar intento de publicar usando la API de GitHub
 - `-DryRun` — simula la acción sin realizar llamadas de red (útil para pruebas)
 - `-BasePath <path>` — especificar carpeta donde escribir `ip.html` y `ftp.pid`
